@@ -1,16 +1,24 @@
 import random
 from datetime import datetime
-import time
 
+MasterList = []
 
 LogToWrite = []
 
 def LogWriteAdd (Type,string) :
     SetStr= "[{}][{} {}] {}".format(Type, datetime.today().strftime('%d-%m-%Y'),datetime.today().strftime('%H:%M:%S') ,string)
     LogToWrite.append(SetStr)
-    print(LogToWrite)
+
+def LogPrint (loglist):
+    for x in range(len(loglist)) :
+        print(loglist[x])
+
 
 LogWriteAdd("BOOT", "TEST")
+LogWriteAdd("TEST", "Ceci est un test")
+for x in range(6) :
+    LogWriteAdd("WARNING", "Ceci est le test {}".format(x))
+LogPrint(LogToWrite)
 
 
 RandomNoms = [["Lotion", "Soin Peau"], ["Antiride", "Soin Peau"], ["Kératine", "Cheuveux"], ["Shampoing", "Cheuveux"], ["Colorant", "Cheuveux"], ["Déodorant", "Hygiène"], ["Mascara", "Maquillage"], ["Gloss", "Maquillage"], ["Fond de Teint", "Maquillage"], ["Rouge a lèvre", "Maquillage"]]
@@ -39,7 +47,7 @@ def Initialisation_Produits_Tests (Num) :
         Test.TypeProduit = Temp[1]
         Test.PrixProduit = random.randrange(2, 200)
         ListeTestProduits.append(Test)
-
+    LogWriteAdd("TEST", "Liste aléatoire de produits de {} élméments créée.".format(Num))
     return ListeTestProduits
 
 def Affichage_Listes (Item) :
@@ -48,7 +56,75 @@ def Affichage_Listes (Item) :
         print("ID : ", Temp.ID)
         print( "Nom De Produit : ", Temp.NomProduit, "  --  Type de Produit : ", Temp.TypeProduit)
         print("Quantité en Stock : ", Temp.QuantiteStock, "  --  Prix du Produit : ", Temp.PrixProduit,"\n")
+    LogWriteAdd("LOG", "Liste de produits affichée.")
     return
 
+
+def MenuSelection(liste, log) :
+    global LogToWrite
+    print("Veuillez selectionner une action : \n0 - [TEST] - Générer une liste de produits temporaire.\n1 - Afficher la liste de produits.\n2 - Ajouter un nouveau produit.\n3 - Selectionner un produit par son identifiant.\n4 - Modifier un produit.\n5 - Supprimer un produit.\n6 - Afficher le registre actuel\n7 - Ajouter un message personalisé au registre.")
+    select = (input())
+
+    if select == "":
+        print("Veuillez entrer une commande valide (Ne peut pas être vide)")
+        LogWriteAdd("WARNING", "Commande Invalide (Commande Vide)")
+        return -1
+    else :
+        select = int(select)
+
+    if select > 7 or select < 0 :
+        print("Veuillez entrer une commande valide (Ne peut pas être supérieure a 7 ou inférieure à 0)")
+        LogWriteAdd("WARNING", "Commande Invalide (Commande hors des options)")
+        return
+    
+    
+    match((select)):
+        case 0 :
+            print("fait")
+            LogWriteAdd("DEBUG","Génération d'une liste par l'utilisateur")
+            return select
+        case 1 :
+            Affichage_Listes(liste)
+            print("fait")
+            LogWriteAdd("DEBUG", "Liste de produits affichée par l'utilsateur")
+            return select
+        case 2 :
+            None
+            return select
+        case 3 :
+            None
+            return select
+        case 4 :
+            None
+            return select
+        case 5 :
+            None
+            return select
+        case 6 :
+            LogPrint(log)
+            LogWriteAdd("LOG", "Registre affiché par l'utilisateur.")
+            return select
+        case 7 :
+            None
+            return select
+
+
 ListeDeTest = Initialisation_Produits_Tests(5)
-#Affichage_Listes(ListeDeTest)
+
+LogPrint(LogToWrite)
+
+def main() :
+    global MasterList
+    print (MasterList)
+    global LogToWrite
+    while 1 == 1 :
+        MenuFeedback = MenuSelection(MasterList, LogToWrite)
+        
+        if MenuFeedback == 0 :
+            MasterList = Initialisation_Produits_Tests(5)
+            print("debug, généré")
+
+Affichage_Listes(MasterList)
+
+
+main()
