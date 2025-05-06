@@ -1,4 +1,16 @@
 import random
+from datetime import datetime
+import time
+
+
+LogToWrite = []
+
+def LogWriteAdd (Type,string) :
+    SetStr= "[{}][{} {}] {}".format(Type, datetime.today().strftime('%d-%m-%Y'),datetime.today().strftime('%H:%M:%S') ,string)
+    LogToWrite.append(SetStr)
+    print(LogToWrite)
+
+LogWriteAdd("BOOT", "TEST")
 
 
 RandomNoms = [["Lotion", "Soin Peau"], ["Antiride", "Soin Peau"], ["Kératine", "Cheuveux"], ["Shampoing", "Cheuveux"], ["Colorant", "Cheuveux"], ["Déodorant", "Hygiène"], ["Mascara", "Maquillage"], ["Gloss", "Maquillage"], ["Fond de Teint", "Maquillage"], ["Rouge a lèvre", "Maquillage"]]
@@ -39,4 +51,4 @@ def Affichage_Listes (Item) :
     return
 
 ListeDeTest = Initialisation_Produits_Tests(5)
-Affichage_Listes(ListeDeTest)
+#Affichage_Listes(ListeDeTest)
