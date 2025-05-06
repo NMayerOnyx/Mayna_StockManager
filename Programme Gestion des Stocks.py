@@ -2,8 +2,8 @@ import random
 from datetime import datetime
 
 MasterList = []
-
 LogToWrite = []
+SelectedProduct = None
 
 def LogWriteAdd (Type,string) :
     SetStr= "[{}][{} {}] {}".format(Type, datetime.today().strftime('%d-%m-%Y'),datetime.today().strftime('%H:%M:%S') ,string)
@@ -60,10 +60,15 @@ def Affichage_Listes (Item) :
     return
 
 
-def MenuSelection(liste, log) :
+def MenuSelection() :
     global LogToWrite
     global MasterList
+    global SelectedProduct
     print("Veuillez selectionner une action : \n0 - [TEST] - Générer une liste de produits temporaire.\n1 - Afficher la liste de produits.\n2 - Ajouter un nouveau produit.\n3 - Selectionner un produit par son identifiant.\n4 - Modifier un produit.\n5 - Supprimer un produit.\n6 - Afficher le registre actuel\n7 - Ajouter un message personalisé au registre.")
+    if SelectedProduct == None :
+        print ("Aucun produit selectionné.")
+    else :
+        print("Produit Selectionné = [Id = ", MasterList[SelectedProduct].ID, "] Nom = ", MasterList[SelectedProduct].NomProduit)
     select = (input())
 
     if select == "":
@@ -92,12 +97,18 @@ def MenuSelection(liste, log) :
             NouvProduit.ID = MasterList[len(MasterList)-1].ID + 1
             NouvProduit.NomProduit = input("Entrez le nom du nouveau produit")
             NouvProduit.TypeProduit = input("Entrez le type du nouveau produit")
-            NouvProduit.PrixProduit = input("Entrez le prix du nouveau produit")
-            NouvProduit.QuantiteStock = input("Entrez la quantité en stock du nouveau produit")
+            NouvProduit.PrixProduit = int(input("Entrez le prix du nouveau produit"))
+            NouvProduit.QuantiteStock = int(input("Entrez la quantité en stock du nouveau produit"))
             MasterList.append(NouvProduit)
             return select
         case 3 :
-            None
+            IDSearch = (input("Entrez l'id du produit que vous souhaitez sélectionner"))
+            IDSearch = int(IDSearch)
+            for i in range(len(MasterList)):
+                print("Debug Scan ", MasterList[i].NomProduit)
+                if MasterList[i].ID == IDSearch :
+                    SelectedProduct = i
+                    print("Selectionné = ", MasterList[i].ID, MasterList[i].NomProduit )
             return select
         case 4 :
             None
@@ -106,7 +117,7 @@ def MenuSelection(liste, log) :
             None
             return select
         case 6 :
-            LogPrint(log)
+            LogPrint(LogToWrite)
             LogWriteAdd("LOG", "Registre affiché par l'utilisateur.")
             return select
         case 7 :
@@ -120,10 +131,10 @@ LogPrint(LogToWrite)
 
 def main() :
     global MasterList
-    print (MasterList)
     global LogToWrite
+
     while 1 == 1 :
-        MenuFeedback = MenuSelection(MasterList, LogToWrite)
+        MenuFeedback = MenuSelection()
         
         if MenuFeedback == 0 :
             MasterList = Initialisation_Produits_Tests(5)
