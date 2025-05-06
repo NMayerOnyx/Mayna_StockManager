@@ -62,6 +62,7 @@ def Affichage_Listes (Item) :
 
 def MenuSelection(liste, log) :
     global LogToWrite
+    global MasterList
     print("Veuillez selectionner une action : \n0 - [TEST] - Générer une liste de produits temporaire.\n1 - Afficher la liste de produits.\n2 - Ajouter un nouveau produit.\n3 - Selectionner un produit par son identifiant.\n4 - Modifier un produit.\n5 - Supprimer un produit.\n6 - Afficher le registre actuel\n7 - Ajouter un message personalisé au registre.")
     select = (input())
 
@@ -80,16 +81,20 @@ def MenuSelection(liste, log) :
     
     match((select)):
         case 0 :
-            print("fait")
             LogWriteAdd("DEBUG","Génération d'une liste par l'utilisateur")
             return select
         case 1 :
-            Affichage_Listes(liste)
-            print("fait")
+            Affichage_Listes(MasterList)
             LogWriteAdd("DEBUG", "Liste de produits affichée par l'utilsateur")
             return select
         case 2 :
-            None
+            NouvProduit = Produit()
+            NouvProduit.ID = MasterList[len(MasterList)-1].ID + 1
+            NouvProduit.NomProduit = input("Entrez le nom du nouveau produit")
+            NouvProduit.TypeProduit = input("Entrez le type du nouveau produit")
+            NouvProduit.PrixProduit = input("Entrez le prix du nouveau produit")
+            NouvProduit.QuantiteStock = input("Entrez la quantité en stock du nouveau produit")
+            MasterList.append(NouvProduit)
             return select
         case 3 :
             None
