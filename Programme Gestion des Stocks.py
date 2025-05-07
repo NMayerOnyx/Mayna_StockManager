@@ -20,6 +20,21 @@ for x in range(6) :
     LogWriteAdd("WARNING", "Ceci est le test {}".format(x))
 LogPrint(LogToWrite)
 
+def InputNumberCheck(entry, min, max) :
+    if entry == "":
+        print("Veuillez entrer une commande valide (Ne peut pas être vide)")
+        LogWriteAdd("WARNING", "Commande Invalide (Commande Vide)")
+        return 0
+    else :
+        entry = int(entry)
+
+    if entry > max or entry < min :
+        print("Veuillez entrer une commande valide (Ne peut pas être supérieure a", max, " ou inférieure à ",min, ")")
+        LogWriteAdd("WARNING", "Commande Invalide (Commande hors des options)")
+        return 0
+    
+    return 1
+    
 
 RandomNoms = [["Lotion", "Soin Peau"], ["Antiride", "Soin Peau"], ["Kératine", "Cheuveux"], ["Shampoing", "Cheuveux"], ["Colorant", "Cheuveux"], ["Déodorant", "Hygiène"], ["Mascara", "Maquillage"], ["Gloss", "Maquillage"], ["Fond de Teint", "Maquillage"], ["Rouge a lèvre", "Maquillage"]]
 
@@ -65,33 +80,31 @@ def MenuSelection() :
     global MasterList
     global SelectedProduct
     print("Veuillez selectionner une action : \n0 - [TEST] - Générer une liste de produits temporaire.\n1 - Afficher la liste de produits.\n2 - Ajouter un nouveau produit.\n3 - Selectionner un produit par son identifiant.\n4 - Modifier un produit.\n5 - Supprimer un produit.\n6 - Afficher le registre actuel\n7 - Ajouter un message personalisé au registre.")
+   
     if SelectedProduct == None :
         print ("Aucun produit selectionné.")
     else :
         print("Produit Selectionné = [Id = ", MasterList[SelectedProduct].ID, "] Nom = ", MasterList[SelectedProduct].NomProduit)
-    select = (input())
+    Select = (input())
 
-    if select == "":
-        print("Veuillez entrer une commande valide (Ne peut pas être vide)")
-        LogWriteAdd("WARNING", "Commande Invalide (Commande Vide)")
-        return -1
-    else :
-        select = int(select)
-
-    if select > 7 or select < 0 :
-        print("Veuillez entrer une commande valide (Ne peut pas être supérieure a 7 ou inférieure à 0)")
-        LogWriteAdd("WARNING", "Commande Invalide (Commande hors des options)")
+    
+    InputCheck = InputNumberCheck(Select, 0, 7)
+    if InputCheck == 0 :
         return
+    Select = int(Select)
+
     
     
-    match((select)):
+    match((Select)):
         case 0 :
             LogWriteAdd("DEBUG","Génération d'une liste par l'utilisateur")
-            return select
+            return Select
+        
         case 1 :
             Affichage_Listes(MasterList)
             LogWriteAdd("DEBUG", "Liste de produits affichée par l'utilsateur")
-            return select
+            return Select
+        
         case 2 :
             NouvProduit = Produit()
             NouvProduit.ID = MasterList[len(MasterList)-1].ID + 1
@@ -100,7 +113,8 @@ def MenuSelection() :
             NouvProduit.PrixProduit = int(input("Entrez le prix du nouveau produit"))
             NouvProduit.QuantiteStock = int(input("Entrez la quantité en stock du nouveau produit"))
             MasterList.append(NouvProduit)
-            return select
+            return Select
+        
         case 3 :
             IDSearch = (input("Entrez l'id du produit que vous souhaitez sélectionner"))
             IDSearch = int(IDSearch)
@@ -109,20 +123,79 @@ def MenuSelection() :
                 if MasterList[i].ID == IDSearch :
                     SelectedProduct = i
                     print("Selectionné = ", MasterList[i].ID, MasterList[i].NomProduit )
-            return select
+            return Select
+        
         case 4 :
-            None
-            return select
+            if SelectedProduct == None :
+                print("Aucun produit selectioné!!!")
+                return Select
+            
+            print("Veuillez selectionner une action : \n1 - Modifier la quantité en stock.\n2 - Modifier le prix.")
+            Select2 = input()
+
+            InputCheck = InputNumberCheck(Select2, 1, 2)
+            if InputCheck == 0 :
+                return
+            Select2 = int(Select2)
+            
+            match Select2 :
+                case 1 :
+                    print("Veuillez selectionner une action : \n1 - Réduire le stock.\n2 - Augmenter le stock\n3 - Directement modifier le stock")
+                    Select3 = input()
+
+                    InputCheck = InputNumberCheck(Select3, 1, 3)
+                    if InputCheck == 0 :
+                        return
+                    Select3 = int(Select3)
+
+                    match Select3 :
+
+                        case 1 :
+                            StockMod = int(input("Entrez la quantité de stock retirée : "))
+                            MasterList[SelectedProduct].QuantiteStock -= StockMod
+                            if MasterList[SelectedProduct].QuantiteStock < 0 :
+                                print("Le stock est négatif! Cette opération sera annulée!!")
+                                MasterList[SelectedProduct].QuantiteStock += StockMod
+                            else:
+                                print("Le stock est désormais à : ", MasterList[SelectedProduct].QuantiteStock)
+                            
+
+                        case 2 :
+                            StockMod = int(input("Entrez la quantité de stock ajoutée : "))
+                            MasterList[SelectedProduct].QuantiteStock += StockMod
+                            print("Le stock est désormais à : ", MasterList[SelectedProduct].QuantiteStock)
+
+                        case 3 :
+                            StockMod = int(input("Entrez la quantité de stock à appliquer : "))
+                            TempStock = MasterList[SelectedProduct].QuantiteStock
+                            MasterList[SelectedProduct].QuantiteStock = StockMod
+                            if MasterList[SelectedProduct].QuantiteStock < 0 :
+                                print("Le stock est négatif! Cette opération sera annulée!!")
+                                MasterList[SelectedProduct].QuantiteStock = TempStock
+                            else:
+                                print("Le stock est désormais à : ", MasterList[SelectedProduct].QuantiteStock)
+
+                case 2 :
+                    PriceMod = int(input("Entrez le nouveau prix a appliquer : "))
+                    TempPrice = MasterList[SelectedProduct].PrixProduit
+                    MasterList[SelectedProduct].PrixProduit = PriceMod
+                    if MasterList[SelectedProduct].PrixProduit < 0 :
+                        print("Le prix est négatif! Cette opération sera annulée!!")
+                        MasterList[SelectedProduct].PrixProduit = TempPrice
+                    else:
+                        print("Le prix est désormais à : ", MasterList[SelectedProduct].PrixProduit)
+
+            return Select
         case 5 :
             None
-            return select
+            return Select
         case 6 :
             LogPrint(LogToWrite)
             LogWriteAdd("LOG", "Registre affiché par l'utilisateur.")
-            return select
+            return Select
         case 7 :
             None
-            return select
+            return Select
 
 
 ListeDeTest = Initialisation_Produits_Tests(5)
