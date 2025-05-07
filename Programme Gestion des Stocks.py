@@ -108,10 +108,10 @@ def MenuSelection() :
         case 2 :
             NouvProduit = Produit()
             NouvProduit.ID = MasterList[len(MasterList)-1].ID + 1
-            NouvProduit.NomProduit = input("Entrez le nom du nouveau produit")
-            NouvProduit.TypeProduit = input("Entrez le type du nouveau produit")
-            NouvProduit.PrixProduit = int(input("Entrez le prix du nouveau produit"))
-            NouvProduit.QuantiteStock = int(input("Entrez la quantité en stock du nouveau produit"))
+            NouvProduit.NomProduit = input("Entrez le nom du nouveau produit : ")
+            NouvProduit.TypeProduit = input("Entrez le type du nouveau produit : ")
+            NouvProduit.PrixProduit = int(input("Entrez le prix du nouveau produit : "))
+            NouvProduit.QuantiteStock = int(input("Entrez la quantité en stock du nouveau produit : "))
             MasterList.append(NouvProduit)
             return Select
         
@@ -153,6 +153,7 @@ def MenuSelection() :
                         case 1 :
                             StockMod = int(input("Entrez la quantité de stock retirée : "))
                             MasterList[SelectedProduct].QuantiteStock -= StockMod
+
                             if MasterList[SelectedProduct].QuantiteStock < 0 :
                                 print("Le stock est négatif! Cette opération sera annulée!!")
                                 MasterList[SelectedProduct].QuantiteStock += StockMod
@@ -169,6 +170,7 @@ def MenuSelection() :
                             StockMod = int(input("Entrez la quantité de stock à appliquer : "))
                             TempStock = MasterList[SelectedProduct].QuantiteStock
                             MasterList[SelectedProduct].QuantiteStock = StockMod
+
                             if MasterList[SelectedProduct].QuantiteStock < 0 :
                                 print("Le stock est négatif! Cette opération sera annulée!!")
                                 MasterList[SelectedProduct].QuantiteStock = TempStock
@@ -179,6 +181,7 @@ def MenuSelection() :
                     PriceMod = int(input("Entrez le nouveau prix a appliquer : "))
                     TempPrice = MasterList[SelectedProduct].PrixProduit
                     MasterList[SelectedProduct].PrixProduit = PriceMod
+
                     if MasterList[SelectedProduct].PrixProduit < 0 :
                         print("Le prix est négatif! Cette opération sera annulée!!")
                         MasterList[SelectedProduct].PrixProduit = TempPrice
@@ -187,14 +190,27 @@ def MenuSelection() :
 
             return Select
         case 5 :
-            None
+            if SelectedProduct == None :
+                print("Aucun produit selectioné!!!")
+                return Select
+            
+            print("Voulez-vous vraiment supprimer ce produit définitivement? : [Id = ", MasterList[SelectedProduct].ID, "] Nom = ", MasterList[SelectedProduct].NomProduit, "\n Si oui, écrivez 'supprimer', sinon tappez autre chose et pressez entree.")
+            Select4 = input()
+            
+            if Select4 == "supprimer" :
+                del MasterList[SelectedProduct]
+                SelectedProduct = None
+                print("Produit supprimé.")
+                
+
             return Select
         case 6 :
             LogPrint(LogToWrite)
             LogWriteAdd("LOG", "Registre affiché par l'utilisateur.")
             return Select
         case 7 :
-            None
+            LogString = input("Veuillez entrer le texte a ajouter au registre : ")
+            LogWriteAdd("MANUAL",LogString)
             return Select
 
 
