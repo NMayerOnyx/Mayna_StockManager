@@ -214,9 +214,7 @@ def MenuSelection() :
             return Select
 
 
-ListeDeTest = Initialisation_Produits_Tests(5)
 
-LogPrint(LogToWrite)
 
 def main() :
     global MasterList
