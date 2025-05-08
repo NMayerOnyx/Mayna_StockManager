@@ -1,6 +1,8 @@
 import random
 from datetime import datetime
 
+
+
 MasterList = []
 LogToWrite = []
 SelectedProduct = None
@@ -113,7 +115,9 @@ def MenuSelection() :
             NouvProduit.PrixProduit = int(input("Entrez le prix du nouveau produit : "))
             NouvProduit.QuantiteStock = int(input("Entrez la quantité en stock du nouveau produit : "))
             MasterList.append(NouvProduit)
-            return Select
+            TempString = "Ajout d'un produit : [ID : {}] Nom : {}.".format(NouvProduit.ID, NouvProduit.NomProduit)
+            LogWriteAdd("LOG", TempString)
+            return Select   
         
         case 3 :
             IDSearch = (input("Entrez l'id du produit que vous souhaitez sélectionner"))
@@ -122,14 +126,18 @@ def MenuSelection() :
                 print("Debug Scan ", MasterList[i].NomProduit)
                 if MasterList[i].ID == IDSearch :
                     SelectedProduct = i
-                    print("Selectionné = ", MasterList[i].ID, MasterList[i].NomProduit )
+                    print("Selectionné = ", MasterList[i].ID, MasterList[i].NomProduit)
+            TempString = "Selection du produit [ID : {}] Nom : {}.".format(MasterList[i].ID, MasterList[i].NomProduit)
+            LogWriteAdd("LOG", TempString)
             return Select
         
         case 4 :
             if SelectedProduct == None :
                 print("Aucun produit selectioné!!!")
+                LogWriteAdd("ERROR", "Tentative de modifications sans produit selectionné.")
                 return Select
-            
+            TempString = ""
+
             print("Veuillez selectionner une action : \n1 - Modifier la quantité en stock.\n2 - Modifier le prix.")
             Select2 = input()
 
@@ -142,6 +150,7 @@ def MenuSelection() :
                 case 1 :
                     print("Veuillez selectionner une action : \n1 - Réduire le stock.\n2 - Augmenter le stock\n3 - Directement modifier le stock")
                     Select3 = input()
+                    LogWriteAdd("LOG", "Tentative de modification de stock de [ID : {}] Nom : {}.".format(MasterList[SelectedProduct].ID, MasterList[SelectedProduct].NomProduit))
 
                     InputCheck = InputNumberCheck(Select3, 1, 3)
                     if InputCheck == 0 :
@@ -157,14 +166,18 @@ def MenuSelection() :
                             if MasterList[SelectedProduct].QuantiteStock < 0 :
                                 print("Le stock est négatif! Cette opération sera annulée!!")
                                 MasterList[SelectedProduct].QuantiteStock += StockMod
+                                LogWriteAdd("ERROR","Tentative de modification de stock résultant en un stock négatif.")
                             else:
                                 print("Le stock est désormais à : ", MasterList[SelectedProduct].QuantiteStock)
+                            
+                            LogWriteAdd("LOG", "Modification de stock de [ID : {}] Nom : {}. Stock modifié de {} à {}".format(MasterList[SelectedProduct].ID, MasterList[SelectedProduct].NomProduit, MasterList[SelectedProduct].QuantiteStock + StockMod, MasterList[SelectedProduct].QuantiteStock))
                             
 
                         case 2 :
                             StockMod = int(input("Entrez la quantité de stock ajoutée : "))
                             MasterList[SelectedProduct].QuantiteStock += StockMod
                             print("Le stock est désormais à : ", MasterList[SelectedProduct].QuantiteStock)
+                            LogWriteAdd("LOG", "Modification de stock de [ID : {}] Nom : {}. Stock modifié de {} à {}".format(MasterList[SelectedProduct].ID, MasterList[SelectedProduct].NomProduit, MasterList[SelectedProduct].QuantiteStock - StockMod, MasterList[SelectedProduct].QuantiteStock))
 
                         case 3 :
                             StockMod = int(input("Entrez la quantité de stock à appliquer : "))
@@ -174,30 +187,38 @@ def MenuSelection() :
                             if MasterList[SelectedProduct].QuantiteStock < 0 :
                                 print("Le stock est négatif! Cette opération sera annulée!!")
                                 MasterList[SelectedProduct].QuantiteStock = TempStock
+                                LogWriteAdd("ERROR","Tentative de modification de stock résultant en un stock négatif.")
                             else:
                                 print("Le stock est désormais à : ", MasterList[SelectedProduct].QuantiteStock)
+                            LogWriteAdd("LOG", "Modification de stock de [ID : {}] Nom : {}. Stock modifié de {} à {}".format(MasterList[SelectedProduct].ID, MasterList[SelectedProduct].NomProduit, TempStock, MasterList[SelectedProduct].QuantiteStock))
 
                 case 2 :
                     PriceMod = int(input("Entrez le nouveau prix a appliquer : "))
                     TempPrice = MasterList[SelectedProduct].PrixProduit
                     MasterList[SelectedProduct].PrixProduit = PriceMod
+                    LogWriteAdd("LOG", "Tentative de modification du prix de [ID : {}] Nom : {}.".format(MasterList[SelectedProduct].ID, MasterList[SelectedProduct].NomProduit))
 
                     if MasterList[SelectedProduct].PrixProduit < 0 :
                         print("Le prix est négatif! Cette opération sera annulée!!")
                         MasterList[SelectedProduct].PrixProduit = TempPrice
+                        LogWriteAdd("ERROR","Tentative de modification de prix résultant en un prix négatif.")
                     else:
                         print("Le prix est désormais à : ", MasterList[SelectedProduct].PrixProduit)
+                        LogWriteAdd("LOG", "Modification de prix de [ID : {}] Nom : {}. Stock modifié de {} à {}".format(MasterList[SelectedProduct].ID, MasterList[SelectedProduct].NomProduit, TempPrice, MasterList[SelectedProduct].PrixProduit))
 
             return Select
         case 5 :
             if SelectedProduct == None :
                 print("Aucun produit selectioné!!!")
+                LogWriteAdd("ERROR", "Tentative de SUPPRESSION sans produit selectionné.")
                 return Select
             
+            LogWriteAdd("LOG", "Tentative de SUPPRESSION de [ID : {}] Nom : {}.".format(MasterList[SelectedProduct].ID, MasterList[SelectedProduct].NomProduit))
             print("Voulez-vous vraiment supprimer ce produit définitivement? : [Id = ", MasterList[SelectedProduct].ID, "] Nom = ", MasterList[SelectedProduct].NomProduit, "\n Si oui, écrivez 'supprimer', sinon tappez autre chose et pressez entree.")
             Select4 = input()
             
             if Select4 == "supprimer" :
+                LogWriteAdd("LOG", "SUPPRESSION DEFINITIVE de [ID : {}] Nom : {}.".format(MasterList[SelectedProduct].ID, MasterList[SelectedProduct].NomProduit))
                 del MasterList[SelectedProduct]
                 SelectedProduct = None
                 print("Produit supprimé.")
@@ -205,8 +226,8 @@ def MenuSelection() :
 
             return Select
         case 6 :
-            LogPrint(LogToWrite)
             LogWriteAdd("LOG", "Registre affiché par l'utilisateur.")
+            LogPrint(LogToWrite)
             return Select
         case 7 :
             LogString = input("Veuillez entrer le texte a ajouter au registre : ")
