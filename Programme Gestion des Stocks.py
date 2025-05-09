@@ -2,27 +2,36 @@ import random
 from datetime import datetime
 
 
-
+#MasterList est la liste complète (Temporaire et pour test) des produits.
 MasterList = []
+#LogToWrite est le registre actuellement en mémoire, sous forme de liste
 LogToWrite = []
+#SelectedProduct est le produit de MasterList actuellement selectionné pour modifications.
 SelectedProduct = None
+GenAmount = None
 
 def LogWriteAdd (Type,string) :
+    #Fonction ajoutant un élément dans la liste LogToWrite(Le registre), avec la date et l'heure actuelle, un flag(Type) et un texte donnés.
     SetStr= "[{}][{} {}] {}".format(Type, datetime.today().strftime('%d-%m-%Y'),datetime.today().strftime('%H:%M:%S') ,string)
     LogToWrite.append(SetStr)
 
 def LogPrint (loglist):
+    #Fonction affichant le registre en mémoire
     for x in range(len(loglist)) :
         print(loglist[x])
 
 
+#Test basique de LogWriteAdd et LogPrint
 LogWriteAdd("BOOT", "TEST")
 LogWriteAdd("TEST", "Ceci est un test")
 for x in range(6) :
     LogWriteAdd("WARNING", "Ceci est le test {}".format(x))
 LogPrint(LogToWrite)
 
+
 def InputNumberCheck(entry, min, max) :
+    #Fonction vérifiant si le nombre entré par l'utilisateur se trouve dans une plage determinée, et retourne 1 si oui, 0 sinon.
+
     if entry == "":
         print("Veuillez entrer une commande valide (Ne peut pas être vide)")
         LogWriteAdd("WARNING", "Commande Invalide (Commande Vide)")
@@ -42,7 +51,7 @@ RandomNoms = [["Lotion", "Soin Peau"], ["Antiride", "Soin Peau"], ["Kératine", 
 
 class Produit :
 
-    #Classe représentant un produit
+    #Classe représentant un produit avec plusieurs caracteristiques
     
     def __init__ (self):
         self.ID = None
@@ -51,8 +60,9 @@ class Produit :
         self.TypeProduit = ""
         self.PrixProduit = 0
 
-#Initialisation de quelques produits de test dans une liste
+
 def Initialisation_Produits_Tests (Num) :
+    #Fonction retournant une liste de produit aléatoire depuis une liste faite au préalable, avec un nombre d'entrées donné. Fonction de test!
     ListeTestProduits = []
     for x in range(Num) :
         NbRand = random.randrange(10)
@@ -68,6 +78,7 @@ def Initialisation_Produits_Tests (Num) :
     return ListeTestProduits
 
 def Affichage_Listes (Item) :
+    #Fonction affichant une liste de produits donnée, avec les caractéristiques de chaque produit.
     for x in range(len(Item)) :
         Temp = Item[x]
         print("ID : ", Temp.ID)
@@ -78,36 +89,43 @@ def Affichage_Listes (Item) :
 
 
 def MenuSelection() :
+    #Programme de menu pour sélectionner une action en tapant un numéro. Sera remplacé par une interface TKinter.
     global LogToWrite
     global MasterList
     global SelectedProduct
+    global GenAmount
     print("Veuillez selectionner une action : \n0 - [TEST] - Générer une liste de produits temporaire.\n1 - Afficher la liste de produits.\n2 - Ajouter un nouveau produit.\n3 - Selectionner un produit par son identifiant.\n4 - Modifier un produit.\n5 - Supprimer un produit.\n6 - Afficher le registre actuel\n7 - Ajouter un message personalisé au registre.")
    
+   #Affichage du produit actuellement selectionné
     if SelectedProduct == None :
         print ("Aucun produit selectionné.")
     else :
         print("Produit Selectionné = [Id = ", MasterList[SelectedProduct].ID, "] Nom = ", MasterList[SelectedProduct].NomProduit)
-    Select = (input())
+    Select = (input("Entrez une commande : "))
 
-    
+    #Verification de l'entrée
     InputCheck = InputNumberCheck(Select, 0, 7)
     if InputCheck == 0 :
         return
     Select = int(Select)
 
     
-    
+    #Si l'entrée est dans la plage demandée, alors lancer le programme en accordance.
     match((Select)):
         case 0 :
+            #Demande un nombre de produits a générer pour MasterList, ce qui sera fait post MenuSelection (Test)
+            GenAmount = input("Entrez le nombre de Produits a générer : ")
             LogWriteAdd("DEBUG","Génération d'une liste par l'utilisateur")
             return Select
         
         case 1 :
+            #Affichage de la liste des produits, tout simplemenjt
             Affichage_Listes(MasterList)
             LogWriteAdd("DEBUG", "Liste de produits affichée par l'utilsateur")
             return Select
         
         case 2 :
+            #Création et ajout d'un nouveau produit dans la liste. L'ID s'incrémente toujours selon le dernier produit de la liste (l'id le plus élevé)
             NouvProduit = Produit()
             NouvProduit.ID = MasterList[len(MasterList)-1].ID + 1
             NouvProduit.NomProduit = input("Entrez le nom du nouveau produit : ")
@@ -120,18 +138,26 @@ def MenuSelection() :
             return Select   
         
         case 3 :
-            IDSearch = (input("Entrez l'id du produit que vous souhaitez sélectionner"))
+            #Selection d'un produit par son ID, si il existe. Lorsque selectionné, il pourra etre modifié ou supprimé.
+            ProduitVerif = 0
+
+            IDSearch = (input("Entrez l'id du produit que vous souhaitez sélectionner : "))
             IDSearch = int(IDSearch)
             for i in range(len(MasterList)):
-                print("Debug Scan ", MasterList[i].NomProduit)
                 if MasterList[i].ID == IDSearch :
                     SelectedProduct = i
                     print("Selectionné = ", MasterList[i].ID, MasterList[i].NomProduit)
+                    ProduitVerif = 1
+            if ProduitVerif == 0 :
+                print("Aucun produit de cet ID n'a été trouvé!")
+                LogWriteAdd("LOG", "Recherche infructueuse.")
+                return Select
             TempString = "Selection du produit [ID : {}] Nom : {}.".format(MasterList[i].ID, MasterList[i].NomProduit)
             LogWriteAdd("LOG", TempString)
             return Select
         
         case 4 :
+            #Verification de la selection, puis modification de stock, direct, ou par changement, ainsi que modif directe du prix 
             if SelectedProduct == None :
                 print("Aucun produit selectioné!!!")
                 LogWriteAdd("ERROR", "Tentative de modifications sans produit selectionné.")
@@ -149,9 +175,10 @@ def MenuSelection() :
             match Select2 :
                 case 1 :
                     print("Veuillez selectionner une action : \n1 - Réduire le stock.\n2 - Augmenter le stock\n3 - Directement modifier le stock")
+                    print("Stock actuel de", MasterList[SelectedProduct].NomProduit ," : ",MasterList[SelectedProduct].QuantiteStock)
                     Select3 = input()
                     LogWriteAdd("LOG", "Tentative de modification de stock de [ID : {}] Nom : {}.".format(MasterList[SelectedProduct].ID, MasterList[SelectedProduct].NomProduit))
-
+                    
                     InputCheck = InputNumberCheck(Select3, 1, 3)
                     if InputCheck == 0 :
                         return
@@ -168,7 +195,7 @@ def MenuSelection() :
                                 MasterList[SelectedProduct].QuantiteStock += StockMod
                                 LogWriteAdd("ERROR","Tentative de modification de stock résultant en un stock négatif.")
                             else:
-                                print("Le stock est désormais à : ", MasterList[SelectedProduct].QuantiteStock)
+                                print("Le stock de ",MasterList[SelectedProduct].NomProduit ," est désormais à : ", MasterList[SelectedProduct].QuantiteStock)
                             
                             LogWriteAdd("LOG", "Modification de stock de [ID : {}] Nom : {}. Stock modifié de {} à {}".format(MasterList[SelectedProduct].ID, MasterList[SelectedProduct].NomProduit, MasterList[SelectedProduct].QuantiteStock + StockMod, MasterList[SelectedProduct].QuantiteStock))
                             
@@ -176,7 +203,7 @@ def MenuSelection() :
                         case 2 :
                             StockMod = int(input("Entrez la quantité de stock ajoutée : "))
                             MasterList[SelectedProduct].QuantiteStock += StockMod
-                            print("Le stock est désormais à : ", MasterList[SelectedProduct].QuantiteStock)
+                            print("Le stock de ",MasterList[SelectedProduct].NomProduit ," est désormais à : ", MasterList[SelectedProduct].QuantiteStock)
                             LogWriteAdd("LOG", "Modification de stock de [ID : {}] Nom : {}. Stock modifié de {} à {}".format(MasterList[SelectedProduct].ID, MasterList[SelectedProduct].NomProduit, MasterList[SelectedProduct].QuantiteStock - StockMod, MasterList[SelectedProduct].QuantiteStock))
 
                         case 3 :
@@ -189,11 +216,12 @@ def MenuSelection() :
                                 MasterList[SelectedProduct].QuantiteStock = TempStock
                                 LogWriteAdd("ERROR","Tentative de modification de stock résultant en un stock négatif.")
                             else:
-                                print("Le stock est désormais à : ", MasterList[SelectedProduct].QuantiteStock)
+                                print("Le stock de ",MasterList[SelectedProduct].NomProduit ," est désormais à : ", MasterList[SelectedProduct].QuantiteStock)
                             LogWriteAdd("LOG", "Modification de stock de [ID : {}] Nom : {}. Stock modifié de {} à {}".format(MasterList[SelectedProduct].ID, MasterList[SelectedProduct].NomProduit, TempStock, MasterList[SelectedProduct].QuantiteStock))
 
                 case 2 :
                     PriceMod = int(input("Entrez le nouveau prix a appliquer : "))
+                    print("Prix actuel de", MasterList[SelectedProduct].NomProduit ," : ",MasterList[SelectedProduct].PrixProduit)
                     TempPrice = MasterList[SelectedProduct].PrixProduit
                     MasterList[SelectedProduct].PrixProduit = PriceMod
                     LogWriteAdd("LOG", "Tentative de modification du prix de [ID : {}] Nom : {}.".format(MasterList[SelectedProduct].ID, MasterList[SelectedProduct].NomProduit))
@@ -203,11 +231,12 @@ def MenuSelection() :
                         MasterList[SelectedProduct].PrixProduit = TempPrice
                         LogWriteAdd("ERROR","Tentative de modification de prix résultant en un prix négatif.")
                     else:
-                        print("Le prix est désormais à : ", MasterList[SelectedProduct].PrixProduit)
+                        print("Le prix de ",MasterList[SelectedProduct].NomProduit ," est désormais à : ", MasterList[SelectedProduct].PrixProduit)
                         LogWriteAdd("LOG", "Modification de prix de [ID : {}] Nom : {}. Stock modifié de {} à {}".format(MasterList[SelectedProduct].ID, MasterList[SelectedProduct].NomProduit, TempPrice, MasterList[SelectedProduct].PrixProduit))
 
             return Select
         case 5 :
+            #Verif de la selection puis demande de suppression, necessite d'écrire supprimer afin d'éviter les suppressions accidentelles
             if SelectedProduct == None :
                 print("Aucun produit selectioné!!!")
                 LogWriteAdd("ERROR", "Tentative de SUPPRESSION sans produit selectionné.")
@@ -221,15 +250,19 @@ def MenuSelection() :
                 LogWriteAdd("LOG", "SUPPRESSION DEFINITIVE de [ID : {}] Nom : {}.".format(MasterList[SelectedProduct].ID, MasterList[SelectedProduct].NomProduit))
                 del MasterList[SelectedProduct]
                 SelectedProduct = None
-                print("Produit supprimé.")
+                print("Produit ",MasterList[SelectedProduct].NomProduit ," supprimé.")
                 
 
             return Select
         case 6 :
+            #Affichage du registre d'application
             LogWriteAdd("LOG", "Registre affiché par l'utilisateur.")
+            print("=========================================================================================================================")
             LogPrint(LogToWrite)
+            print("=========================================================================================================================")
             return Select
         case 7 :
+            #Ajout d'une entrée de registre personalisée.
             LogString = input("Veuillez entrer le texte a ajouter au registre : ")
             LogWriteAdd("MANUAL",LogString)
             return Select
@@ -240,13 +273,15 @@ def MenuSelection() :
 def main() :
     global MasterList
     global LogToWrite
+    global GenAmount
 
     while 1 == 1 :
         MenuFeedback = MenuSelection()
         
         if MenuFeedback == 0 :
-            MasterList = Initialisation_Produits_Tests(5)
-            print("debug, généré")
+            GenAmount = int(GenAmount)
+            MasterList = Initialisation_Produits_Tests(GenAmount)
+            print("DEBUG - Liste de ", GenAmount, " éléments générée")
 
 Affichage_Listes(MasterList)
 
