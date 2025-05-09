@@ -33,5 +33,8 @@ product_list.heading("Stock", text="Stock")
 product_list.heading("Prix", text="Prix")
 product_list.pack(fill="both", expand=True)
 
+product_list.insert("", "end", values=(1, "Produit 1", "Type A", 10, 19.99))
+product_list.insert("", "end", values=(2, "Produit 2", "Type B", 5, 29.99)) 
+
 # Start the main event loop
 root.mainloop()
