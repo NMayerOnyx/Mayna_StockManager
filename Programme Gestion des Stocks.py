@@ -94,8 +94,10 @@ def MenuSelection() :
     global MasterList
     global SelectedProduct
     global GenAmount
+    print("=========================================================================================================================")
     print("Veuillez selectionner une action : \n0 - [TEST] - Générer une liste de produits temporaire.\n1 - Afficher la liste de produits.\n2 - Ajouter un nouveau produit.\n3 - Selectionner un produit par son identifiant.\n4 - Modifier un produit.\n5 - Supprimer un produit.\n6 - Afficher le registre actuel\n7 - Ajouter un message personalisé au registre.")
-   
+    print("=========================================================================================================================")
+    
    #Affichage du produit actuellement selectionné
     if SelectedProduct == None :
         print ("Aucun produit selectionné.")
