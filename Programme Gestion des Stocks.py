@@ -1,6 +1,7 @@
 import random
 from datetime import datetime
 
+
 import tkinter as tk
 from tkinter import ttk
 
@@ -25,21 +26,8 @@ button_frame = tk.Frame(root, width=200, bg="lightgray")
 button_frame.pack(side="left", fill="y")
 
 # ajout de boutons à la partie gauche
-for i in range(0, 6):
-    buttons.append(tk.Button(button_frame, text="Générer une Liste", width=20, height=2))
-    (buttons[0]).pack(pady=15)
-    buttons.append(tk.Button(button_frame, text="Ajouter un Produit", width=20, height=2))
-    (buttons[1]).pack(pady=15)
-    buttons.append(tk.Button(button_frame, text="Modifier un produit", width=20, height=2))
-    (buttons[2]).pack(pady=15)
-    buttons.append(tk.Button(button_frame, text="Supprimer un Produit", width=20, height=2))
-    (buttons[3]).pack(pady=15)
-    buttons.append(tk.Button(button_frame, text="Ajouter une entrée\nau registre", width=20, height=2))
-    (buttons[4]).pack(pady=15)
-    buttons.append(tk.Button(button_frame, text="Aide", width=20, height=2))
-    (buttons[5]).pack(pady=15)
-    buttons.append(tk.Button(button_frame, text="Quitter", width=20, height=2))
-    (buttons[6]).pack(pady=15)
+
+
     
 
 
@@ -67,11 +55,21 @@ product_list.pack(fill="both", expand=True)
 
 def LoadListToTreeview (Item) :
     #Fonction affichant une liste de produits donnée, avec les caractéristiques de chaque produit.
+    
+    product_list.delete(*product_list.get_children()) #Supprime les anciens produits de la liste
     for x in range(len(Item)) :
         Temp = Item[x]
         product_list.insert("", "end", values=(Temp.ID, Temp.NomProduit, Temp.TypeProduit, Temp.QuantiteStock, Temp.PrixProduit))
     LogWriteAdd("LOG", "Liste de produits chargée dans Treeview.")
     return
+
+def button_generate():
+    # Fonction pour générer une liste de produits
+    global MasterList
+    global GenAmount
+    MasterList = Initialisation_Produits_Tests(30)
+    LoadListToTreeview(MasterList)
+    print("DEBUG - Liste de ", GenAmount, " éléments générée")
 
 #TK INTERFACE FIN===========================================================================================================================
 
@@ -338,26 +336,33 @@ def MenuSelection() :
             return Select
 
 
+buttons.append(tk.Button(button_frame, text="Générer une Liste", width=20, height=2, command=button_generate))
+(buttons[0]).pack(pady=15)
+buttons.append(tk.Button(button_frame, text="Ajouter un Produit", width=20, height=2))
+(buttons[1]).pack(pady=15)
+buttons.append(tk.Button(button_frame, text="Modifier un produit", width=20, height=2))
+(buttons[2]).pack(pady=15)
+buttons.append(tk.Button(button_frame, text="Supprimer un Produit", width=20, height=2))
+(buttons[3]).pack(pady=15)
+buttons.append(tk.Button(button_frame, text="Ajouter une entrée\nau registre", width=20, height=2))
+(buttons[4]).pack(pady=15)
+buttons.append(tk.Button(button_frame, text="Aide", width=20, height=2))
+(buttons[5]).pack(pady=15)
+buttons.append(tk.Button(button_frame, text="Quitter", width=20, height=2))
+(buttons[6]).pack(pady=15)
 
 
-def main() :
-    global MasterList
-    global LogToWrite
-    global GenAmount
 
-    while 1 == 1 :
-        MenuFeedback = MenuSelection()
-        
-        if MenuFeedback == 0 :
-            GenAmount = int(GenAmount)
-            MasterList = Initialisation_Produits_Tests(GenAmount)
-            print("DEBUG - Liste de ", GenAmount, " éléments générée")
+
 
 Affichage_Listes(MasterList)
 
 
-MasterList = Initialisation_Produits_Tests(20)
+
 LoadListToTreeview(MasterList)
 
 
-main()
+LoadListToTreeview(MasterList)
+
+root.mainloop()
+
