@@ -4,29 +4,32 @@ from datetime import datetime
 import tkinter as tk
 from tkinter import ttk
 
-# Create the main application window
+nomsboutons = ["Générer une Liste", "Ajouter un Produit", "Modifier un produit", "Supprimer un Produit", "Ajouter une entrée\nau registre", "Aide", "Quitter"]
+
+# Création de la fenêtre principale
 root = tk.Tk()
 root.title("Gestionnaire de Produits")
 root.geometry("1200x800")
 
-# Frame for buttons on the left
+# partie gauche de la fenêtre pour les boutons
 button_frame = tk.Frame(root, width=200, bg="lightgray")
 button_frame.pack(side="left", fill="y")
 
-# Add 8 buttons to the left frame
-for i in range(1, 9):
-    button = tk.Button(button_frame, text=f"Button {i}", width=20, height=2)
+# ajout de boutons à la partie gauche
+for i in range(0, 6):
+    button = tk.Button(button_frame, text=nomsboutons[i], width=20, height=2)
     button.pack(pady=15)
 
-# Frame for the product list on the right
+
+# liste de produits à droite
 list_frame = tk.Frame(root)
 list_frame.pack(side="right", fill="both", expand=True)
 
-# Label for the product list
+# Label pour la liste de produits
 list_label = tk.Label(list_frame, text="Liste de Produits", font=("Arial", 14))
 list_label.pack(pady=10)
 
-# Treeview widget for displaying products and their characteristics
+# widget
 columns = ("Id", "Nom", "Type", "Stock", "Prix")
 product_list = ttk.Treeview(list_frame, columns=columns, show="headings")
 product_list.heading("Id", text="Id")
@@ -60,7 +63,7 @@ GenAmount = None
 
 def LogWriteAdd (Type,string) :
     #Fonction ajoutant un élément dans la liste LogToWrite(Le registre), avec la date et l'heure actuelle, un flag(Type) et un texte donnés.
-    SetStr= "[{}][{} {}] {}".format(Type, datetime.today().strftime('%d-%m-%Y'),datetime.today().strftime('%H:%M:%S') ,string)
+    SetStr= f"[{Type}][{datetime.today().strftime('%d-%m-%Y')} {datetime.today().strftime('%H:%M:%S')}] {string}"
     LogToWrite.append(SetStr)
 
 def LogPrint (loglist):
@@ -124,6 +127,8 @@ def Initialisation_Produits_Tests (Num) :
         ListeTestProduits.append(Test)
     LogWriteAdd("TEST", "Liste aléatoire de produits de {} élméments créée.".format(Num))
     return ListeTestProduits
+
+
 
 def Affichage_Listes (Item) :
     #Fonction affichant une liste de produits donnée, avec les caractéristiques de chaque produit.
@@ -338,5 +343,6 @@ Affichage_Listes(MasterList)
 
 MasterList = Initialisation_Produits_Tests(20)
 LoadListToTreeview(MasterList)
+
 
 main()
