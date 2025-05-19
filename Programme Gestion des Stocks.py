@@ -14,6 +14,24 @@ SelectedProduct = None
 GenAmount = None
 buttons = []
 
+def add_product(name, type, stock, price):
+    # Fonction pour ajouter un produit à la liste
+    global MasterList
+    global LogToWrite
+    global SelectedProduct
+    global GenAmount
+    NouvProduit = Produit()
+    NouvProduit.ID = MasterList[len(MasterList)-1].ID + 1
+    NouvProduit.NomProduit = name
+    NouvProduit.TypeProduit = type
+    NouvProduit.PrixProduit = int(price)
+    NouvProduit.QuantiteStock = int(stock)
+    MasterList.append(NouvProduit)
+    TempString = "Ajout d'un produit : [ID : {}] Nom : {}.".format(NouvProduit.ID, NouvProduit.NomProduit)
+    LogWriteAdd("LOG", TempString)
+    LoadListToTreeview(MasterList)
+    return
+
 #TK INTERFACE ===========================================================================================================================
 
 # Création de la fenêtre principale
@@ -70,6 +88,42 @@ def button_generate():
     MasterList = Initialisation_Produits_Tests(30)
     LoadListToTreeview(MasterList)
     print("DEBUG - Liste de ", GenAmount, " éléments générée")
+
+def button_add_product():
+     # Fonction pour ajouter un produit
+    root = tk.Tk()
+    root.title("Ajout de Produit")
+    root.geometry("800x400")
+    # Créer les champs d'entrée pour le produit
+    label_name = tk.Label(root, text="Nom du Produit:")
+    label_name.pack()
+    entry_name = tk.Entry(root)
+    entry_name.pack()
+    label_type = tk.Label(root, text="Type de Produit:")
+    label_type.pack()
+    entry_type = tk.Entry(root)
+    entry_type.pack()
+    label_stock = tk.Label(root, text="Quantité en Stock:")
+    label_stock.pack()
+    entry_stock = tk.Entry(root)
+    entry_stock.pack()
+    label_price = tk.Label(root, text="Prix du Produit:")
+    label_price.pack()
+    entry_price = tk.Entry(root)
+    entry_price.pack()
+    # Créer un bouton pour ajouter le produit
+    button_add = tk.Button(root, text="Ajouter Produit", command=lambda: add_product(entry_name.get(), entry_type.get(), entry_stock.get(), entry_price.get()))
+    button_add.pack()
+    # Fonction pour ajouter le produit à la liste
+
+    pass
+
+def button_modify_product():
+  # Fonction pour modifier un produit
+    root = tk.Tk()
+    root.title("Modification de Produit")
+    pass
+           
 
 #TK INTERFACE FIN===========================================================================================================================
 
@@ -338,7 +392,7 @@ def MenuSelection() :
 
 buttons.append(tk.Button(button_frame, text="Générer une Liste", width=20, height=2, command=button_generate))
 (buttons[0]).pack(pady=15)
-buttons.append(tk.Button(button_frame, text="Ajouter un Produit", width=20, height=2))
+buttons.append(tk.Button(button_frame, text="Ajouter un Produit", width=20, height=2, command=button_add_product))
 (buttons[1]).pack(pady=15)
 buttons.append(tk.Button(button_frame, text="Modifier un produit", width=20, height=2))
 (buttons[2]).pack(pady=15)
