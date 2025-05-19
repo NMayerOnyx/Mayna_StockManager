@@ -4,7 +4,16 @@ from datetime import datetime
 import tkinter as tk
 from tkinter import ttk
 
-nomsboutons = ["Générer une Liste", "Ajouter un Produit", "Modifier un produit", "Supprimer un Produit", "Ajouter une entrée\nau registre", "Aide", "Quitter"]
+#MasterList est la liste complète (Temporaire et pour test) des produits.
+MasterList = []
+#LogToWrite est le registre actuellement en mémoire, sous forme de liste
+LogToWrite = []
+#SelectedProduct est le produit de MasterList actuellement selectionné pour modifications.
+SelectedProduct = None
+GenAmount = None
+buttons = []
+
+#TK INTERFACE ===========================================================================================================================
 
 # Création de la fenêtre principale
 root = tk.Tk()
@@ -17,8 +26,21 @@ button_frame.pack(side="left", fill="y")
 
 # ajout de boutons à la partie gauche
 for i in range(0, 6):
-    button = tk.Button(button_frame, text=nomsboutons[i], width=20, height=2)
-    button.pack(pady=15)
+    buttons.append(tk.Button(button_frame, text="Générer une Liste", width=20, height=2))
+    (buttons[0]).pack(pady=15)
+    buttons.append(tk.Button(button_frame, text="Ajouter un Produit", width=20, height=2))
+    (buttons[1]).pack(pady=15)
+    buttons.append(tk.Button(button_frame, text="Modifier un produit", width=20, height=2))
+    (buttons[2]).pack(pady=15)
+    buttons.append(tk.Button(button_frame, text="Supprimer un Produit", width=20, height=2))
+    (buttons[3]).pack(pady=15)
+    buttons.append(tk.Button(button_frame, text="Ajouter une entrée\nau registre", width=20, height=2))
+    (buttons[4]).pack(pady=15)
+    buttons.append(tk.Button(button_frame, text="Aide", width=20, height=2))
+    (buttons[5]).pack(pady=15)
+    buttons.append(tk.Button(button_frame, text="Quitter", width=20, height=2))
+    (buttons[6]).pack(pady=15)
+    
 
 
 # liste de produits à droite
@@ -39,6 +61,7 @@ product_list.heading("Stock", text="Stock")
 product_list.heading("Prix", text="Prix")
 product_list.pack(fill="both", expand=True)
 
+
 #Initialisation de la liste de produits
 #MasterList est la liste de produits, qui sera affichée dans le Treeview
 
@@ -50,16 +73,8 @@ def LoadListToTreeview (Item) :
     LogWriteAdd("LOG", "Liste de produits chargée dans Treeview.")
     return
 
+#TK INTERFACE FIN===========================================================================================================================
 
-
-
-#MasterList est la liste complète (Temporaire et pour test) des produits.
-MasterList = []
-#LogToWrite est le registre actuellement en mémoire, sous forme de liste
-LogToWrite = []
-#SelectedProduct est le produit de MasterList actuellement selectionné pour modifications.
-SelectedProduct = None
-GenAmount = None
 
 def LogWriteAdd (Type,string) :
     #Fonction ajoutant un élément dans la liste LogToWrite(Le registre), avec la date et l'heure actuelle, un flag(Type) et un texte donnés.
